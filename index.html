@@ -17,10 +17,13 @@
 </head>
 
 <body>
-<audio id="bgSound" autoplay preload loop="loop">
+<!-- <audio id="bgSound" autoplay preload loop="loop">
 	<source src="./audios/could_girl.mp3" type="audio/mpeg" />
-</audio>
-<EMBED src="./audios/could_girl.mp3" width=0 height=0 type=audio/mpeg loop="true">
+</audio> -->
+<audio id="bgSound" width=0 height=0 src="./audios/could_girl.mp3" preload="auto" loop="loop"></audio>
+
+<!-- <EMBED src="./audios/could_girl.mp3" width=0 height=0 type=audio/mpeg loop="true"> -->
+
 <div id="mainDiv">
 	<div id="content">
 		<div id="loveHeart">
@@ -98,6 +101,46 @@ if (!document.createElement('canvas').getContext) {
 	adjustCodePosition();
 	$("#code").typewriter();
 }
+
+function audioAutoPlay(id){
+    var audio = document.getElementById(id);
+
+    if (window.WeixinJSBridge) {
+        WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
+            audio.play();
+        }, false);
+    } else {
+        document.addEventListener("WeixinJSBridgeReady", function () {
+            WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
+                audio.play();
+            });
+        }, false);
+    }
+    audio.play();
+
+    return false;
+}
+
+$(function(){
+	var autoPlaying = false;
+	document.addEventListener('click', setCallback);
+    document.addEventListener('touchend', setCallback);
+    function setCallback(){
+    	if (!autoPlaying) {
+    		if (navigator.userAgent.match(/MicroMessenger/i) == "micromessenger") {
+			   //在微信中打开
+			   audioAutoplay('bgSound');
+			   console.log('在微信中打开');
+			  }else {
+			    $('#bgSound').get(0).play();
+			   console.log('在浏览器中打开');
+			 }
+    	}
+    }
+
+
+	
+});
 </script>
 
 </body>
